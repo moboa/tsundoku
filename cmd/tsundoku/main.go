@@ -1,11 +1,11 @@
 package main
 
 import (
-	"fmt"
 	"log"
 	"net/url"
 	"os"
 
+	"github.com/moboa/tsundoku/manga"
 	"github.com/urfave/cli"
 )
 
@@ -25,7 +25,7 @@ func main() {
 			panic(err)
 		}
 
-		fmt.Println(chapterURL.Hostname())
+		manga.PrintChapterPages(chapterURL)
 		return nil
 	}
 
