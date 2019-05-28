@@ -9,19 +9,30 @@ import (
 const pageNumberSelector string = "#pageMenu > option"
 const imageSelector string = "#img"
 
+var collector = colly.NewCollector()
+
 // FetchPageImages returns a list containing images of the chapter at specified URL
 func FetchPageImages(chapterURL *url.URL) []string {
+	pageNumbers := fetchPageNumbers(chapterURL)
+	imagesUrls := fetchImageUrls(chapterURL, pageNumbers)
+	return fetchImages(imagesUrls)
+}
+
+func fetchPageNumbers(chapterURL *url.URL) []string {
 	var pageNumbers []string
-	collector := colly.NewCollector()
 	collector.OnHTML(pageNumberSelector, func(element *colly.HTMLElement) {
 		pageNumbers = append(pageNumbers, element.Text)
 	})
 	collector.Visit(chapterURL.String())
 
 	collector.OnHTMLDetach(pageNumberSelector)
-	imageUrls := make([]string, 0, len(pageNumbers))
+	return pageNumbers
+}
+
+func fetchImageUrls(chapterURL *url.URL, pageNumbers []string) []string {
+	imagesUrls := make([]string, 0, len(pageNumbers))
 	collector.OnHTML(imageSelector, func(element *colly.HTMLElement) {
-		imageUrls = append(imageUrls, element.Attr("src"))
+		imagesUrls = append(imagesUrls, element.Attr("src"))
 	})
 	for _, e := range pageNumbers {
 		url := chapterURL.String() + "/" + e
@@ -29,11 +40,17 @@ func FetchPageImages(chapterURL *url.URL) []string {
 	}
 
 	collector.OnHTMLDetach(imageSelector)
-	images := make([]string, 0, len(imageUrls))
+	return imagesUrls
+}
+
+func fetchImages(imagesUrls []string) []string {
+	images := make([]string, 0, len(imagesUrls))
+
 	collector.OnResponse(func(response *colly.Response) {
 		images = append(images, string(response.Body))
 	})
-	for _, e := range imageUrls {
+
+	for _, e := range imagesUrls {
 		collector.Visit(e)
 	}
 
