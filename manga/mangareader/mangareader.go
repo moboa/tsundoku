@@ -1,4 +1,4 @@
-package scrape
+package mangareader
 
 import (
 	"net/url"
@@ -11,11 +11,10 @@ const imageSelector string = "#img"
 
 var collector = colly.NewCollector()
 
-// FetchPageImages returns a list containing images of the chapter at specified URL
 func FetchPageImages(chapterURL *url.URL) []string {
 	pageNumbers := fetchPageNumbers(chapterURL)
 	imagesUrls := fetchImageUrls(chapterURL, pageNumbers)
-	return fetchImages(imagesUrls)
+	return fetchManagerReaderImages(imagesUrls)
 }
 
 func fetchPageNumbers(chapterURL *url.URL) []string {
@@ -43,7 +42,7 @@ func fetchImageUrls(chapterURL *url.URL, pageNumbers []string) []string {
 	return imagesUrls
 }
 
-func fetchImages(imagesUrls []string) []string {
+func fetchManagerReaderImages(imagesUrls []string) []string {
 	images := make([]string, 0, len(imagesUrls))
 
 	collector.OnResponse(func(response *colly.Response) {

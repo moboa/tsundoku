@@ -2,12 +2,11 @@ package main
 
 import (
 	"fmt"
-	"log"
 	"net/url"
 	"os"
 
+	"github.com/moboa/tsundoku/manga"
 	"github.com/moboa/tsundoku/save"
-	"github.com/moboa/tsundoku/scrape"
 	"github.com/urfave/cli"
 )
 
@@ -36,13 +35,13 @@ func main() {
 			panic(err)
 		}
 
-		images := scrape.FetchPageImages(chapterURL)
+		images := manga.FetchPageImages(chapterURL)
 		save.ToFiles(images, c.String("output"))
 		return nil
 	}
 
 	err := app.Run(os.Args)
 	if err != nil {
-		log.Fatal(err)
+		panic(err)
 	}
 }
