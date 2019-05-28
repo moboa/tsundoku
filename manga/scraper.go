@@ -6,10 +6,13 @@ import (
 	"net/url"
 	"strconv"
 
+	"github.com/gocolly/colly"
 	"github.com/moboa/tsundoku/manga/mangareader"
 )
 
-var sourceParsers = map[string]func(*url.URL) []string{
+var collector = colly.NewCollector()
+
+var sourceParsers = map[string]func(*colly.Collector, *url.URL) []string{
 	"www.mangareader.net": mangareader.FetchPageImages,
 }
 
@@ -21,7 +24,7 @@ func FetchPageImages(chapterURL *url.URL) []string {
 		log.Fatal(chapterURL.Hostname() + " is not supported.")
 	}
 
-	images := sourceParser(chapterURL)
+	images := sourceParser(collector, chapterURL)
 	lenImages := len(images)
 	fmt.Println("Downloaded " + strconv.Itoa(lenImages) + " pages from " + chapterURL.String())
 

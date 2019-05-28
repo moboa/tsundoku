@@ -4,31 +4,31 @@ import (
 	"net/url"
 
 	"github.com/gocolly/colly"
+	"github.com/moboa/tsundoku/manga/mangautil"
 )
 
-const pageNumberSelector string = "#pageMenu > option"
+const pageNumSelector string = "#pageMenu > option"
 const imageSelector string = "#img"
 
-var collector = colly.NewCollector()
-
-func FetchPageImages(chapterURL *url.URL) []string {
-	pageNumbers := fetchPageNumbers(chapterURL)
-	imagesUrls := fetchImageUrls(chapterURL, pageNumbers)
-	return fetchManagerReaderImages(imagesUrls)
+// FetchPageImages returns a list containing images of the chapter at specified MangaReader URL
+func FetchPageImages(collector *colly.Collector, chapterURL *url.URL) []string {
+	pageNumbers := fetchPageNumbers(collector, chapterURL)
+	imagesUrls := fetchImageUrls(collector, chapterURL, pageNumbers)
+	return mangautil.FetchImages(collector, imagesUrls)
 }
 
-func fetchPageNumbers(chapterURL *url.URL) []string {
+func fetchPageNumbers(collector *colly.Collector, chapterURL *url.URL) []string {
 	var pageNumbers []string
-	collector.OnHTML(pageNumberSelector, func(element *colly.HTMLElement) {
+	collector.OnHTML(pageNumSelector, func(element *colly.HTMLElement) {
 		pageNumbers = append(pageNumbers, element.Text)
 	})
 	collector.Visit(chapterURL.String())
 
-	collector.OnHTMLDetach(pageNumberSelector)
+	collector.OnHTMLDetach(pageNumSelector)
 	return pageNumbers
 }
 
-func fetchImageUrls(chapterURL *url.URL, pageNumbers []string) []string {
+func fetchImageUrls(collector *colly.Collector, chapterURL *url.URL, pageNumbers []string) []string {
 	imagesUrls := make([]string, 0, len(pageNumbers))
 	collector.OnHTML(imageSelector, func(element *colly.HTMLElement) {
 		imagesUrls = append(imagesUrls, element.Attr("src"))
@@ -40,18 +40,4 @@ func fetchImageUrls(chapterURL *url.URL, pageNumbers []string) []string {
 
 	collector.OnHTMLDetach(imageSelector)
 	return imagesUrls
-}
-
-func fetchManagerReaderImages(imagesUrls []string) []string {
-	images := make([]string, 0, len(imagesUrls))
-
-	collector.OnResponse(func(response *colly.Response) {
-		images = append(images, string(response.Body))
-	})
-
-	for _, e := range imagesUrls {
-		collector.Visit(e)
-	}
-
-	return images
 }
