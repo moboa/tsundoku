@@ -7,6 +7,7 @@ import (
 	"strconv"
 
 	"github.com/gocolly/colly"
+	"github.com/moboa/tsundoku/manga/mangapark"
 	"github.com/moboa/tsundoku/manga/mangareader"
 )
 
@@ -14,6 +15,7 @@ var collector = colly.NewCollector()
 
 var sourceParsers = map[string]func(*colly.Collector, *url.URL) []string{
 	"www.mangareader.net": mangareader.FetchPageImages,
+	"mangapark.net":       mangapark.FetchPageImages,
 }
 
 // FetchPageImages returns a list containing images of the chapter at specified URL
