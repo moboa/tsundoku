@@ -10,6 +10,7 @@ import (
 	"github.com/gocolly/colly"
 	"github.com/moboa/tsundoku/manga/mangapark"
 	"github.com/moboa/tsundoku/manga/mangareader"
+	"github.com/moboa/tsundoku/manga/mangastream"
 )
 
 var collector = colly.NewCollector()
@@ -18,6 +19,7 @@ var sourceParsers = map[string]func(*colly.Collector, string) []string{
 	"mangareader": mangareader.FetchPageImages,
 	"mangapanda":  mangareader.FetchPageImages, // mangapanda has the same layout as mangareader
 	"mangapark":   mangapark.FetchPageImages,
+	"readms":      mangastream.FetchPageImages,
 }
 
 // FetchPageImages returns a list containing images of the chapter at specified URL
@@ -33,7 +35,6 @@ func FetchPageImages(pageURL *url.URL) []string {
 
 	r = regexp.MustCompile(`(.+)(/\d+)/?$`)
 	chapterURL := r.FindStringSubmatch(pageURL.String())[1]
-	fmt.Println(chapterURL)
 	images := sourceParser(collector, chapterURL)
 	lenImages := len(images)
 	fmt.Println("Downloaded " + strconv.Itoa(lenImages) + " pages from " + pageURL.String())
