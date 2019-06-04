@@ -1,7 +1,6 @@
 package mangapark
 
 import (
-	"net/url"
 	"testing"
 
 	"github.com/gocolly/colly"
@@ -9,7 +8,7 @@ import (
 
 func TestFetchPageImages(t *testing.T) {
 	collector := colly.NewCollector()
-	chapterURL, _ := url.Parse("https://mangapark.net/manga/ranma-1-2-rumiko-takahashi/i1347243/")
+	chapterURL := "https://mangapark.net/manga/ranma-1-2-rumiko-takahashi/i1347243"
 	numOfPages := 20
 
 	images := FetchPageImages(collector, chapterURL)

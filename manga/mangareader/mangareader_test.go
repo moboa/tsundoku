@@ -1,7 +1,6 @@
 package mangareader
 
 import (
-	"net/url"
 	"testing"
 
 	"github.com/gocolly/colly"
@@ -10,7 +9,7 @@ import (
 var collector = colly.NewCollector()
 
 func TestFetchMangareaderPageImages(t *testing.T) {
-	chapterURL, _ := url.Parse("https://www.mangareader.net/yu-yu-hakusho/2")
+	chapterURL := "https://www.mangareader.net/yu-yu-hakusho/2"
 	numOfPages := 24
 
 	images := FetchPageImages(collector, chapterURL)
@@ -21,7 +20,7 @@ func TestFetchMangareaderPageImages(t *testing.T) {
 }
 
 func TestFetchMangapandaPageImages(t *testing.T) {
-	chapterURL, _ := url.Parse("https://www.mangapanda.com/noblesse/2")
+	chapterURL := "https://www.mangapanda.com/noblesse/2"
 	numOfPages := 22
 
 	images := FetchPageImages(collector, chapterURL)

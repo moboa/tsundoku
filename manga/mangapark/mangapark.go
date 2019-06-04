@@ -3,7 +3,6 @@ package mangapark
 import (
 	"encoding/json"
 	"log"
-	"net/url"
 	"strings"
 
 	"github.com/gocolly/colly"
@@ -11,12 +10,12 @@ import (
 )
 
 // FetchPageImages returns a list containing images of the chapter at specified MangaPark URL
-func FetchPageImages(collector *colly.Collector, chapterURL *url.URL) []string {
+func FetchPageImages(collector *colly.Collector, chapterURL string) []string {
 	imagesUrls := fetchImageUrls(chapterURL)
 	return mangautil.FetchImages(collector, imagesUrls)
 }
 
-func fetchImageUrls(chapterURL *url.URL) []string {
+func fetchImageUrls(chapterURL string) []string {
 	const splitAfterSep = "var _load_pages = "
 	const splitBeforeSep = ";"
 
@@ -25,7 +24,7 @@ func fetchImageUrls(chapterURL *url.URL) []string {
 	collector.OnResponse(func(r *colly.Response) {
 		response = string(r.Body)
 	})
-	collector.Visit(chapterURL.String())
+	collector.Visit(chapterURL)
 
 	if len(response) == 0 {
 		log.Fatal("Could not find pages urls at specified MangaPark URL")

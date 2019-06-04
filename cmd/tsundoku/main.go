@@ -30,12 +30,12 @@ func main() {
 			return cli.NewExitError(errorMsg, 1)
 		}
 
-		chapterURL, err := url.Parse(c.Args().Get(0))
+		pageURL, err := url.Parse(c.Args().Get(0))
 		if err != nil {
 			panic(err)
 		}
 
-		images := manga.FetchPageImages(chapterURL)
+		images := manga.FetchPageImages(pageURL)
 		save.ToFiles(images, c.String("output"))
 		return nil
 	}
