@@ -15,6 +15,7 @@ var collector = colly.NewCollector()
 
 var sourceParsers = map[string]func(*colly.Collector, *url.URL) []string{
 	"www.mangareader.net": mangareader.FetchPageImages,
+	"www.mangapanda.com":  mangareader.FetchPageImages, // mangapanda has the same layout as mangareader
 	"mangapark.net":       mangapark.FetchPageImages,
 }
 
